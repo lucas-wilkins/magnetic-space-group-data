@@ -1,0 +1,10 @@
+# These requirements are only needed if you want to use the python side of this repository
+# The database is just a json file that can be read with anything
+
+# Data modelling
+pydantic
+
+
+# Validation
+spglib
+numpy
