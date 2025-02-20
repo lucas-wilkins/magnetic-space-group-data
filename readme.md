@@ -16,6 +16,10 @@ How
 ---
 
 This data set is based on the widely used datasets in spglib and crysFML. 
-Additional checks have been performed to make sure that resulting dataset is
+Additional cross-validation has been performed to make sure that resulting dataset is
 both internally and externally consistent. 
 This can be found under in the `validation` directory.
+
+Structure
+---------
+
