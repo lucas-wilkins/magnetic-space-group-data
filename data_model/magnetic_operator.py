@@ -11,8 +11,8 @@ class MagneticOperation(BaseModel):
     translation: TranslationType
     time_reversal: int
 
-    @field_validator("time_inversion")
-    def validate_direction(cls, value: int):
+    @field_validator("time_reversal")
+    def validate_time_reversal(cls, value: int):
         if value not in (1, -1):
             raise ValueError("Time inversion must be either 1 or -1.")
         return value
