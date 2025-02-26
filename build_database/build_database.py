@@ -3,6 +3,9 @@ from fractions import Fraction
 from data_model.groups import BNSGroup, OGGroup, WyckoffSite, Group, BNSOGTransform, WyckoffPosition, \
     MagneticSpaceGroupData
 
+from formatting import latex_format_og_symbol, latex_format_bns_symbol, latex_format_uni_symbol
+from formatting import latex_dump
+
 # Load in the crysfml data
 
 from crysfml_load import space_groups, point_operations, hexagonal_point_operations
@@ -160,8 +163,7 @@ for group_number in space_groups:
         number = (group["bns_number_part_1"], group["bns_number_part_2"]),
         number_string = group["bns_number_string"],
         symbol = group["bns_label"],
-        unicode_symbol=group["bns_label"], # TODO
-        latex_symbol=group["bns_label"], # TODO
+        latex_symbol=latex_format_bns_symbol(group["bns_label"]),
 
         operators=bns_operators,
         lattice_vectors=bns_lattice,
@@ -172,19 +174,17 @@ for group_number in space_groups:
         number = (group["og_number_part_1"], group["og_number_part_2"], group["og_number_part_3"]),
         number_string = group["og_number_string"],
         symbol = group["og_label"],
-        unicode_symbol = group["og_label"], # TODO
-        latex_symbol = group["og_label"], # TODO
+        latex_symbol = latex_format_og_symbol(group["og_label"]),
 
         operators = og_operators,
         lattice_vectors = og_lattice,
         wyckoff_sites = og_wyckoff
     )
 
-    group = Group(number=group_number,
+    group = Group(number=group_number+1,
                   group_type=group_type,
                   symbol=group["uni_label"],
-                  unicode_symbol=group["uni_label"], # TODO
-                  latex_symbol=group["uni_label"], # TODO
+                  latex_symbol=latex_format_uni_symbol(group["uni_label"]),
                   bns=bns,
                   og=og,
                   bns_og_transform=bns_og_transform)
@@ -196,4 +196,6 @@ database = MagneticSpaceGroupData(groups=group_list)
 with open("database_dump.json", 'w') as fid:
     s = database.model_dump_json(indent=4)
     fid.write(s)
+
+latex_dump(database, "symbol_table.tex")
 

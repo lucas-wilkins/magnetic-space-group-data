@@ -26,8 +26,5 @@ Structure
 
 
 
-
-Notes on Interpretation
------------------------
-
-The crysFML database contains many translations of (0,0,1), these have been mapped to (0,0,0).
+Validation
+----------

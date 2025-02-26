@@ -21,7 +21,6 @@ class WyckoffSite(BaseModel):
 class BNSGroup(BaseModel):
     number: tuple[int, int]
     symbol: str
-    unicode_symbol: str
     latex_symbol: str
 
     operators: list[MagneticOperation]
@@ -31,7 +30,6 @@ class BNSGroup(BaseModel):
 class OGGroup(BaseModel):
     number: tuple[int, int, int]
     symbol: str
-    unicode_symbol: str
     latex_symbol: str
 
     operators: list[OGMagneticOperation]
@@ -45,6 +43,8 @@ class BNSOGTransform(BaseModel):
 class Group(BaseModel):
     number: int
     group_type: int
+    symbol: str
+    latex_symbol: str
 
     bns: BNSGroup
     og: OGGroup
