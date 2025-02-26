@@ -1,8 +1,10 @@
 from fractions import Fraction
 from pydantic import BaseModel
 
-RotationType = tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
-TranslationType = tuple[Fraction, Fraction, Fraction]
+from data_model.magnetic_operator import (
+    MagneticOperation, OGMagneticOperation,
+    RotationType, TranslationType)
+
 
 class WyckoffPosition(BaseModel):
     position: tuple[Fraction, Fraction, Fraction]
@@ -22,11 +24,19 @@ class BNSGroup(BaseModel):
     unicode_symbol: str
     latex_symbol: str
 
+    operators: list[MagneticOperation]
+    lattice_vectors: list[TranslationType]
+    wyckoff_sites: list[WyckoffSite]
+
 class OGGroup(BaseModel):
     number: tuple[int, int, int]
     symbol: str
     unicode_symbol: str
     latex_symbol: str
+
+    operators: list[OGMagneticOperation]
+    lattice_vectors: list[TranslationType]
+    wyckoff_sites: list[WyckoffSite]
 
 class BNSOGTransform(BaseModel):
     origin: TranslationType

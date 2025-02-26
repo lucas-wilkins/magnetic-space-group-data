@@ -6,7 +6,7 @@ from pydantic import BaseModel, field_validator
 RotationType = tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 TranslationType = tuple[Fraction, Fraction, Fraction]
 
-class MagneticOperation(BaseModel):
+class BaseMagneticOperation(BaseModel):
     rotation: RotationType
     translation: TranslationType
     time_reversal: int
@@ -33,16 +33,13 @@ class MagneticOperation(BaseModel):
 
         return value
 
-    @field_validator("translation")
-    def validate_translation(cls, value):
-        if len(value) != 3:
-            raise ValueError("Translation must have 3 values")
 
-        for i in range(3):
-            if value[i] < 0 or value[i] >= 1:
-                raise ValueError("Translation entries must take values in the half open interval [0, 1)")
+    @staticmethod
+    def from_floating_point(rotation: ArrayLike, translation: ArrayLike, time_reversal: ArrayLike):
+        pass
 
-        return value
+
+class MagneticOperation(BaseMagneticOperation):
 
     def and_then(self, other: "MagneticOperation"):
         """ Composition of operations """
@@ -55,10 +52,40 @@ class MagneticOperation(BaseModel):
         new_time_reversal = self.time_reversal * other.time_reversal
 
 
+    @field_validator("translation")
+    def validate_translation(cls, value):
+        if len(value) != 3:
+            raise ValueError("Translation must have 3 values")
 
-    @staticmethod
-    def from_floating_point(rotation: ArrayLike, translation: ArrayLike, time_reversal: ArrayLike):
-        pass
+        for i in range(3):
+            if value[i] < 0 or value[i] >= 1:
+                raise ValueError("Translation entries must take values in the half open interval [0, 1)")
+
+        return value
+
+
+class OGMagneticOperation(BaseMagneticOperation):
+
+    @field_validator("translation")
+    def validate_translation(cls, value):
+        if len(value) != 3:
+            raise ValueError("Translation must have 3 values")
+
+        for i in range(3):
+            if value[i] < 0:
+                raise ValueError("Translation entries must be positive")
+
+        return value
+
+    def and_then(self, other: "OGMagneticOperation"):
+        """ Composition of operations """
+
+        # Notationally, it is common in group theory to use implicit
+        #  multiplication for left composition, and dot for right composition elsewhere.
+        # This means would be ambiguous to use __mul__ in this case. and_then makes
+        #  the order of application clear
+
+        new_time_reversal = self.time_reversal * other.time_reversal
 
 
 if __name__ == "__main__":

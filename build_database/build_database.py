@@ -6,7 +6,7 @@ from data_model.groups import BNSGroup, OGGroup, WyckoffSite, Group, BNSOGTransf
 # Load in the crysfml data
 
 from crysfml_load import space_groups, point_operations, hexagonal_point_operations
-from data_model.magnetic_operator import MagneticOperation
+from data_model.magnetic_operator import MagneticOperation, OGMagneticOperation
 
 # Augment with spglib data
 
@@ -45,8 +45,6 @@ for group_number in space_groups:
         vector = tuple(Fraction(num, vector_denom) for num in vector_num)
         bns_lattice.append(vector)
 
-    sites = []
-
     # Wyckoff
     for site in group["bns_wyckoff"]:
         label = site["label"]
@@ -75,13 +73,66 @@ for group_number in space_groups:
             positions = positions
         )
 
-        sites.append(wyckoff)
+        bns_wyckoff.append(wyckoff)
 
 
     if group_type == 4:
         og_wyckoff = []
         og_lattice = []
         og_operators = []
+
+        # Operators
+        for point_op_id, translation_num, translation_denom, time_inversion in zip(
+                group["og_point_op"], group["og_translation_num"],
+                group["og_translation_denom"], group["og_time_inversion"]):
+            point_op = point_operations[point_op_id].matrix
+            translation = tuple(Fraction(num, translation_denom) for num in translation_num)
+
+            op = OGMagneticOperation(rotation=point_op,
+                                     translation=translation,
+                                     time_reversal=time_inversion)
+
+            og_operators.append(op)
+
+        # Lattice Vectors
+        for vector_num, vector_denom in zip(
+                group["og_lattice_vectors_num"],
+                group["og_lattice_vectors_denom"]):
+            vector = tuple(Fraction(num, vector_denom) for num in vector_num)
+            og_lattice.append(vector)
+
+        sites = []
+
+        # Wyckoff
+        for site in group["og_wyckoff"]:
+            label = site["label"]
+            multiplicity = site["multiplicity"]
+            positions = []
+
+            for position_num, position_denom, position_xyz, position_mag in zip(
+                    site["positions_num"], site["positions_denom"],
+                    site["positions_xyz"], site["positions_mag"]):
+                position = tuple(Fraction(num, position_denom) for num in position_num)
+
+                pos = WyckoffPosition(
+                    position=position,
+                    xyz=position_xyz,
+                    mag=position_mag
+                )
+
+                positions.append(pos)
+
+            wyckoff = WyckoffSite(
+                name=label,
+                unicode_name=label,  # TODO
+                latex_name=label,  # TODO
+                multiplicity=multiplicity,
+                positions=positions
+            )
+
+            og_wyckoff.append(wyckoff)
+
+        # Relationship between the two representations
 
         bns_og_transform = BNSOGTransform(
             rotation=group["bnsog_point_op"],
@@ -92,7 +143,13 @@ for group_number in space_groups:
         # Note, shallow copy - shouldn't matter here, but could affect some things if not careful
         og_wyckoff = bns_wyckoff
         og_lattice = bns_lattice
-        og_operators = bns_operators
+
+        og_operators = [
+            OGMagneticOperation(
+                rotation = op.rotation,
+                translation = op.translation,
+                time_reversal = op.time_reversal)
+            for op in bns_operators]
 
         bns_og_transform = BNSOGTransform(
             rotation=((1,0,0),(0,1,0),(0,0,1)),
@@ -105,6 +162,10 @@ for group_number in space_groups:
         symbol = group["bns_label"],
         unicode_symbol=group["bns_label"], # TODO
         latex_symbol=group["bns_label"], # TODO
+
+        operators=bns_operators,
+        lattice_vectors=bns_lattice,
+        wyckoff_sites=bns_wyckoff
     )
 
     og = OGGroup(
@@ -114,13 +175,16 @@ for group_number in space_groups:
         unicode_symbol = group["og_label"], # TODO
         latex_symbol = group["og_label"], # TODO
 
+        operators = og_operators,
+        lattice_vectors = og_lattice,
+        wyckoff_sites = og_wyckoff
     )
 
     group = Group(number=group_number,
                   group_type=group_type,
                   symbol=group["uni_label"],
                   unicode_symbol=group["uni_label"], # TODO
-                  latex_symbol=group["uni_label"], # TOO
+                  latex_symbol=group["uni_label"], # TODO
                   bns=bns,
                   og=og,
                   bns_og_transform=bns_og_transform)

@@ -171,7 +171,7 @@ with open("data/crysFML.txt", 'r') as file:
 
             n_positions = int(parts[0])
             multiplicity = int(parts[1])
-            label = parts[2].strip()
+            label = parts[2][1:-1].strip()
 
             # Wyckoff inner loop
             positions_num = []
@@ -229,6 +229,11 @@ with open("data/crysFML.txt", 'r') as file:
                     og_translation_denom.append(int(parts[6 * i + 4]))  # 6n + 4
                     og_time_inversion.append(int(parts[6 * i + 5]))  # 6n + 5
 
+            group_data["og_point_op"] = og_point_op
+            group_data["og_translation_num"] = og_translation_num
+            group_data["og_translation_denom"] = og_translation_denom
+            group_data["og_time_inversion"] = og_time_inversion
+
             # OG Lattice Vectors 1, number of lattice vectors
             line = file.readline().strip()
             n_og_lattice_vectors = int(line)
@@ -244,6 +249,9 @@ with open("data/crysFML.txt", 'r') as file:
                 og_lattice_vectors_num.append([int(parts[4 * i + j]) for j in range(3)])
                 og_lattice_vectors_denom.append(int(parts[4 * i + 3]))
 
+            group_data["og_lattice_vectors_num"] = og_lattice_vectors_num
+            group_data["og_lattice_vectors_denom"] = og_lattice_vectors_denom
+
             # Wyckoff sites 1, number of sites
             line = file.readline().strip()
             n_og_wyckoff = int(line)
@@ -258,7 +266,7 @@ with open("data/crysFML.txt", 'r') as file:
 
                 n_positions = int(parts[0])
                 multiplicity = int(parts[1])
-                label = parts[2].strip()
+                label = parts[2][1:-1].strip()
 
                 # Wyckoff inner loop
                 positions_num = []
@@ -274,6 +282,17 @@ with open("data/crysFML.txt", 'r') as file:
                     positions_xyz.append([int(parts[k + 4]) for k in range(3)])  # 10n + 4,5,6
                     positions_mag.append([int(parts[k + 7]) for k in range(3)])  # 10n + 7,8,9
 
-                og_wyckoff_sites.append((positions_num, positions_denom, positions_xyz, positions_mag))
+                wyckoff_site = {
+                    "label": label,
+                    "multiplicity": multiplicity,
+                    "positions_num": positions_num,
+                    "positions_denom": positions_denom,
+                    "positions_xyz": positions_xyz,
+                    "positions_mag": positions_mag
+                }
+
+                og_wyckoff_sites.append(wyckoff_site)
+
+            group_data["og_wyckoff"] = og_wyckoff_sites
 
         space_groups[group_id] = group_data
