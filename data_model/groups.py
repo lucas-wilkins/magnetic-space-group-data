@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from data_model.magnetic_operator import (
     MagneticOperation, OGMagneticOperation,
-    RotationType, TranslationType)
+    PointOperationType, TranslationType)
 
 
 class WyckoffPosition(BaseModel):
@@ -38,7 +38,7 @@ class OGGroup(BaseModel):
 
 class BNSOGTransform(BaseModel):
     origin: TranslationType
-    rotation: RotationType # TODO - different name?
+    rotation: PointOperationType # TODO - different name?
 
 class Group(BaseModel):
     number: int

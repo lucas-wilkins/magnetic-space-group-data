@@ -149,7 +149,7 @@ for group_number in space_groups:
 
         og_operators = [
             OGMagneticOperation(
-                rotation = op.rotation,
+                rotation = op.point_operation,
                 translation = op.translation,
                 time_reversal = op.time_reversal)
             for op in bns_operators]
