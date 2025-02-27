@@ -1,9 +1,7 @@
 from fractions import Fraction
 from pydantic import BaseModel
 
-from data_model.magnetic_operator import (
-    MagneticOperation, OGMagneticOperation,
-    PointOperationType, TranslationType)
+from msgmodels.operations import MagneticOperation, OGMagneticOperation, PointOperationType, TranslationType
 
 
 class WyckoffPosition(BaseModel):

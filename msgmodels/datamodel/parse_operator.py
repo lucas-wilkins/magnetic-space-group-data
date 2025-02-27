@@ -1,11 +1,11 @@
 import re
 from fractions import Fraction
 
-from magnetic_operator import (
+from msgmodels.operations import (
     MagneticOperation, OGMagneticOperation,
     PointOperationType, TranslationType)
 
-from safe_expression_evaluation import evaluate_algebra
+from msgmodels.datamodel.safe_expression_evaluation import evaluate_algebra
 
 _number_regex = r"\d+(?:\.\d+)?"
 _symbol_regex = r"x|y|z|\-|\+|/|\*"
@@ -50,7 +50,7 @@ def parse_space_group_operator(
     point_op, translation, time_reversal = _parse_space_group_operator(generator_string, time_reversed)
 
     return MagneticOperation(
-        point_op=point_op,
+        point_operation=point_op,
         translation=translation,
         time_reversal=time_reversal)
 
@@ -61,7 +61,7 @@ def parse_space_group_operator_og(
     point_op, translation, time_reversal = _parse_space_group_operator(generator_string, time_reversed)
 
     return OGMagneticOperation(
-        point_op=point_op,
+        point_operation=point_op,
         translation=translation,
         time_reversal=time_reversal)
 
@@ -75,7 +75,7 @@ def _parse_space_group_operator(
     :returns: 'rotation' matrix, translation, and time reversal
     """
 
-    components = generator_string.split(",")
+    components = [x.strip() for x in generator_string.split(",")]
 
     if time_reversed is None:
         if len(components) == 3:
@@ -100,7 +100,7 @@ def _parse_space_group_operator(
     linear = []
 
     # Tokenise to check its sanitary
-    for component in components:
+    for component in components[:3]:
         tokens = re.findall(_number_symbol_regex, component)
         sanitised = "".join(tokens)
 
@@ -150,3 +150,9 @@ def parse_one_line_generators(generator_string: str):
         output.append(parse_space_group_operator(string, time_reversed=time_reversed))
 
     return output
+
+if __name__ == "__main__":
+    string = "-x, y, -z + 1 / 2"
+    op = parse_space_group_operator_og(string, False)
+
+    print(op)

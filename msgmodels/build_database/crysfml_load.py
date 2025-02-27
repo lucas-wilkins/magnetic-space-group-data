@@ -27,7 +27,7 @@ def parse_point_operation(line: str) -> PointOperation:
 
         return PointOperation(
             number=n,
-            name=point_op_label,
+            name=point_op_label[1:-1],
             string_form=point_op_string,
             matrix=point_op_matrix)
 

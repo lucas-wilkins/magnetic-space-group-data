@@ -8,3 +8,7 @@ pydantic
 # Validation
 spglib
 numpy
+
+
+# Testing
+pytest

@@ -1,6 +1,6 @@
 from fractions import Fraction
 
-from data_model.groups import BNSGroup, OGGroup, WyckoffSite, Group, BNSOGTransform, WyckoffPosition, \
+from msgmodels.groups import BNSGroup, OGGroup, WyckoffSite, Group, BNSOGTransform, WyckoffPosition, \
     MagneticSpaceGroupData
 
 from formatting import latex_format_og_symbol, latex_format_bns_symbol, latex_format_uni_symbol
@@ -9,7 +9,7 @@ from formatting import latex_dump
 # Load in the crysfml data
 
 from crysfml_load import space_groups, point_operations, hexagonal_point_operations
-from data_model.magnetic_operator import MagneticOperation, OGMagneticOperation
+from msgmodels.operations import MagneticOperation, OGMagneticOperation
 
 # Augment with spglib data
 
@@ -34,9 +34,10 @@ for group_number in space_groups:
         point_op = point_operations[point_op_id].matrix
         translation = tuple(Fraction(num, translation_denom) for num in translation_num)
 
-        op = MagneticOperation(rotation=point_op,
+        op = MagneticOperation(point_operation=point_op,
                                translation=translation,
-                               time_reversal=time_inversion)
+                               time_reversal=time_inversion,
+                               name=point_operations[point_op_id].name)
 
         bns_operators.append(op)
 
@@ -91,9 +92,10 @@ for group_number in space_groups:
             point_op = point_operations[point_op_id].matrix
             translation = tuple(Fraction(num, translation_denom) for num in translation_num)
 
-            op = OGMagneticOperation(rotation=point_op,
+            op = OGMagneticOperation(point_operation=point_op,
                                      translation=translation,
-                                     time_reversal=time_inversion)
+                                     time_reversal=time_inversion,
+                                     name=point_operations[point_op_id].name)
 
             og_operators.append(op)
 
@@ -149,9 +151,10 @@ for group_number in space_groups:
 
         og_operators = [
             OGMagneticOperation(
-                rotation = op.point_operation,
+                point_operation = op.point_operation,
                 translation = op.translation,
-                time_reversal = op.time_reversal)
+                time_reversal = op.time_reversal,
+                name=op.name)
             for op in bns_operators]
 
         bns_og_transform = BNSOGTransform(

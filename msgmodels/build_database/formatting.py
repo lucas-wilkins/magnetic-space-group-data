@@ -1,10 +1,9 @@
 import re
 
-from data_model.groups import MagneticSpaceGroupData
+from msgmodels.groups import MagneticSpaceGroupData
 
 def latex_format_symbol(raw_text):
-    print(raw_text)
-
+    """ Format a symbol using latex notation"""
     # Find the lattice system part
 
     if raw_text[1] == "_":
@@ -28,10 +27,6 @@ def latex_format_symbol(raw_text):
         rest = parts[0][:-2]
         subscript = parts[0][-1:] + "[" + parts[1]
 
-        print(parts)
-        print(rest, subscript)
-        # exit()
-
         subscript = "_{" + subscript + "}"
 
     else:
@@ -40,7 +35,6 @@ def latex_format_symbol(raw_text):
 
     latex_string = lattice_system + " " + rest + subscript
 
-    print(latex_string)
 
     return latex_string
 
