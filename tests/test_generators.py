@@ -68,7 +68,7 @@ test_points = [rng.random((10, 6)) for i in range(5)]
 random_generator_info = [(random_rotoreflection(rng),
                           rng.random((3,)),
                           rng.integers(0, 2) * 2 - 1)
-                         for i in range(5)]
+                         for i in range(10)]
 
 @pytest.mark.parametrize("points", test_points)
 def test_identity(points):

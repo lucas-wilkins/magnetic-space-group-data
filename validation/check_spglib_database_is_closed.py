@@ -1,5 +1,5 @@
-from pyspinw.util.closures import closure
-from pyspinw.util.group_generators import spglib_generators
+from msg.grouptheory.closures import closure
+from builddatabase.spglib_data import spglib_generators
 
 
 def check_closed(number):
