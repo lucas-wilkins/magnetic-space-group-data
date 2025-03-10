@@ -1,6 +1,5 @@
-from pyspinw.util.group_generators import spglib_generators, parse_one_line_generators
-from pyspinw.util.magnetic_symmetry import name_converter
-from pyspinw.util.closures import closure
+from msg import spacegroups
+from msg.grouptheory.closures import closure
 
 def compare_closure(number):
 
@@ -88,7 +87,7 @@ def histogram_comparison():
 
 
 
-# histogram_comparison()
+histogram_comparison()
 
-for i in range(1651):
-    compare_closure(i+1)
+# for i in range(1651):
+#     compare_closure(i+1)
